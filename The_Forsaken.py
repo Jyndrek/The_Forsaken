@@ -1,54 +1,71 @@
-# Creating the warrior class with starting stats
+
 
 from random import randint
 
-
+# Creating the warrior class with starting stats
 class Warrior:
     def __init__(self, name):
         self.name = name
         self.level = 1
         self.exp = 0
         self.exp_to_level = 750 + (self.level * 250)
-        self.maxhp = 0 + (2 * self.level)
-        self.hp = 0 + (2 * self.level)
-        self.maxmana = 0 + (1 * self.level)
-        self.mana = 0 + (1 * self.level)
-        self.defense = 0 + (2 * self.level)
+        self.maxhp = 40 + (2 * self.level)
+        self.hp = 40 + (4 * self.level)
+        self.maxmana = 10 + (1 * self.level)
+        self.mana = 10 + (1 * self.level)
+        self.defense = 0 + (3 * self.level)
         self.attack_damage = 0 + randint((3+self.level), (7+self.level))
         self.weapons = []
         self.armor = []
         self.health_potions = 1
         self.mana_potions = 1
 
+    # Will be able to use repr to give current status of the player including level, hp, mana, and exp to next level.
+    def __repr__(self):
+        return "{name} is a level {level} Warrior. {name} currently has {hp}hp left and {mana} mana left. {name} requires {exp}exp to the next level".format(name=self.name, level=str(self.level), hp=str(self.hp), mana=str(self.mana), exp=str((self.exp_to_level-self.exp)))
+
     # Creating method for character to level up.
     def level_up(self):
         if self.exp >= self.exp_to_level:
             self.level += 1
-            self.atrpt += 5
+            self.exp = (self.exp - self.exp_to_level)
             print("Congradulations! {name} has leveled up to level {leevl}".format(name = self.name, level = self.level))
     
     # Creating method for character to heal to max health and mana when going to rest.
     def rest(self):
         self.hp = self.maxhp
         self.mana = self.maxmana
+        print("{name} has rested for the night and feels refreshed.".format(name = self.name))
 
     # Creating method for character to deal damage to the target based on characters attack damage and targets defense
     def attack(self, target):
         attack_damage = self.attack_damage - target.defense
         if attack_damage >= target.hp:
             target.hp = 0
-            print("{name} dealt {damage} damage to {target_name}. {target_name} has died".format(name = self.name, damage = attack_damage, target_name = target.name))
+            self.exp += target.expgive
+            print("{name} dealt {damage} damage to {target_name}. {target_name} has died. You gain {exp}exp".format(name = self.name, damage = attack_damage, target_name = target.name, exp = str(target.expgive)))
         elif attack_damage < target.hp:
             target.hp -= attack_damage
             print("{name} dealt {damage} damage to {target_name}. {target_name} has {target_hp} hp left!".format(name = self.name, damage = attack_damage, target_name = target.name, target_hp = target.hp))
 
     # Creating method for character to restore mana using mana potion
     def use_mana_pot(self):
-        self.mana = self.maxmana
+        if self.mana_potions == 0:
+            print("Sorry you are out of mana potions!")
+        elif self.mana_potions > 0:
+            self.mana = self.maxmana
+            self.mana_potions -= 1
+            print("{name} uses a mana potion and has their mana fully restored!".format(name = self.name))
+            
 
     # Creating method for character to restore health using health potion
     def use_hp_pot(self):
-        self.hp = self.maxhp
+        if self.health_potions == 0:
+            print("Sorry you are out of health potions!")
+        elif self.health_potions > 0:
+            self.hp = self._hpmax
+            self.health_potions -= 1
+            print("{name} uses a mana potion and has his mana fully restored!".format(name = self.name))
     
 
 
@@ -59,7 +76,7 @@ class Zombie:
     def __init__(self, level = 1):
         self.level = level
         self.name = "Zombie"
-        self.hp = 30
+        self.hp = 13 + (2 * self.level)
         self.attack_damage = range((self.level), (3 + self.level))
         self.defense = 0
         self.weapons = []
@@ -69,9 +86,38 @@ class Zombie:
     # Creating method for Zombie to deal damage to the target based on attack damage and targets defense
     def attack(self, target):
         attack_damage = self.attack_damage - target.defense
-        target.hp -= attack_damage
+        if attack_damage >= target.hp:
+            target.hp = 0
+            self.exp += target.expgive
+            print("{name} dealt {damage} damage to {target_name}. {target_name} has died. You lose".format(name = self.name, damage = attack_damage, target_name = target.name))
+        elif attack_damage < target.hp:
+            target.hp -= attack_damage
+            print("{name} dealt {damage} damage to {target_name}. {target_name} has {target_hp} hp left!".format(name = self.name, damage = attack_damage, target_name = target.name, target_hp = target.hp))
 
 
+
+class Skeleton:
+    def __init__(self, level = 1):
+        self.level = level
+        self.name = "Skeleton"
+        self.hp = 15 + (2 * self.level)
+        self.attack_damage = range((1 + self.level), (4 + self.level))
+        self.defense = 1
+        self.weapons = []
+        self.armor = []
+        self.expgive = 125 + (self.level * 25)
+
+    def attack(self, target):
+        attack_damage = self.attack_damage - target.defense
+        if attack_damage >= target.hp:
+            target.hp = 0
+            self.exp += target.expgive
+            print("{name} dealt {damage} damage to {target_name}. {target_name} has died. You lose".format(name = self.name, damage = attack_damage, target_name = target.name))
+        elif attack_damage < target.hp:
+            target.hp -= attack_damage
+            print("{name} dealt {damage} damage to {target_name}. {target_name} has {target_hp} hp left!".format(name = self.name, damage = attack_damage, target_name = target.name, target_hp = target.hp))
+
+    
 
 
 
@@ -84,9 +130,9 @@ class Zombie:
 
 
 # Game Testing
-player1_name = input("Please enter the name of your warrior")
+player1_name = input("Please enter the name of your warrior  ")
 player1 = Warrior(player1_name)
 monster = Zombie()
 
 player1.attack(monster)
-
+print(player1.__repr__())
