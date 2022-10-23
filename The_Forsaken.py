@@ -125,14 +125,27 @@ class Skeleton:
 
 
 
+# Starts the game with getting name for character
+player_name = input("In a world over run by monsters there is a town which has been holding struggling to survive. It is up to you adventurer to save the town. What is your name?")
 
+# Creates the player as a Warrior using name
+player1 = Warrior(player_name)
 
+print("You may enter the dungeon whenever you are ready by typing \"dungeon\"")
+print("If you are low on health or mana you can always go back to town by typing \"town\" to rest and recover")
+print("If you would like to check your status including level, hp, mana, and experience needed to the next level type \"status\"")
 
+# creating variable to keep while loop running to repeat available inputs, until a game over condition is met.
+game_over = False
 
-# Game Testing
-player1_name = input("Please enter the name of your warrior  ")
-player1 = Warrior(player1_name)
-monster = Zombie()
-
-player1.attack(monster)
-print(player1.__repr__())
+while game_over == False:
+    raw_input = input(" ")
+    if raw_input == "dungeon":
+        monster = Zombie()
+        player1.attack(monster)
+    elif raw_input == "town":
+        player1.rest()
+    elif raw_input == "status":
+        print(repr(player1))
+    elif raw_input == "quit":
+        game_over = True
