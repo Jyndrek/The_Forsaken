@@ -9,7 +9,7 @@ class Warrior:
         self.level = 1
         self.exp = 0
         self.exp_to_level = 750 + (self.level * 250)
-        self.maxhp = 40 + (2 * self.level)
+        self.maxhp = 40 + (4 * self.level)
         self.hp = 40 + (4 * self.level)
         self.maxmana = 10 + (1 * self.level)
         self.mana = 10 + (1 * self.level)
@@ -29,7 +29,7 @@ class Warrior:
         if self.exp >= self.exp_to_level:
             self.level += 1
             self.exp = (self.exp - self.exp_to_level)
-            print("Congradulations! {name} has leveled up to level {leevl}".format(name = self.name, level = self.level))
+            print("Congradulations! {name} has leveled up to level {level}".format(name = self.name, level = self.level))
     
     # Creating method for character to heal to max health and mana when going to rest.
     def rest(self):
@@ -43,6 +43,7 @@ class Warrior:
         if attack_damage >= target.hp:
             target.hp = 0
             self.exp += target.expgive
+            self.level_up()
             print("{name} dealt {damage} damage to {target_name}. {target_name} has died. You gain {exp}exp".format(name = self.name, damage = attack_damage, target_name = target.name, exp = str(target.expgive)))
         elif attack_damage < target.hp:
             target.hp -= attack_damage
@@ -77,7 +78,7 @@ class Zombie:
         self.level = level
         self.name = "Zombie"
         self.hp = 13 + (2 * self.level)
-        self.attack_damage = range((self.level), (3 + self.level))
+        self.attack_damage = randint((self.level), (3 + self.level))
         self.defense = 0
         self.weapons = []
         self.armor = []
@@ -88,8 +89,8 @@ class Zombie:
         attack_damage = self.attack_damage - target.defense
         if attack_damage >= target.hp:
             target.hp = 0
-            self.exp += target.expgive
             print("{name} dealt {damage} damage to {target_name}. {target_name} has died. You lose".format(name = self.name, damage = attack_damage, target_name = target.name))
+            game_over = True
         elif attack_damage < target.hp:
             target.hp -= attack_damage
             print("{name} dealt {damage} damage to {target_name}. {target_name} has {target_hp} hp left!".format(name = self.name, damage = attack_damage, target_name = target.name, target_hp = target.hp))
@@ -101,7 +102,7 @@ class Skeleton:
         self.level = level
         self.name = "Skeleton"
         self.hp = 15 + (2 * self.level)
-        self.attack_damage = range((1 + self.level), (4 + self.level))
+        self.attack_damage = randint((1 + self.level), (4 + self.level))
         self.defense = 1
         self.weapons = []
         self.armor = []
@@ -111,8 +112,8 @@ class Skeleton:
         attack_damage = self.attack_damage - target.defense
         if attack_damage >= target.hp:
             target.hp = 0
-            self.exp += target.expgive
             print("{name} dealt {damage} damage to {target_name}. {target_name} has died. You lose".format(name = self.name, damage = attack_damage, target_name = target.name))
+            game_over = True
         elif attack_damage < target.hp:
             target.hp -= attack_damage
             print("{name} dealt {damage} damage to {target_name}. {target_name} has {target_hp} hp left!".format(name = self.name, damage = attack_damage, target_name = target.name, target_hp = target.hp))
@@ -138,11 +139,20 @@ print("If you would like to check your status including level, hp, mana, and exp
 # creating variable to keep while loop running to repeat available inputs, until a game over condition is met.
 game_over = False
 
+battle_over = False
+
 while game_over == False:
     raw_input = input(" ")
     if raw_input == "dungeon":
+        battle_over = False
         monster = Zombie()
-        player1.attack(monster)
+        while battle_over == False:
+            if monster.hp == 0:
+                battle_over = True
+            else:
+                player1.attack(monster)
+                if monster.hp > 0:
+                    monster.attack(player1)
     elif raw_input == "town":
         player1.rest()
     elif raw_input == "status":
