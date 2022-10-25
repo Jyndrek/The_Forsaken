@@ -1,6 +1,9 @@
 
 
 from random import randint
+from random import random
+from secrets import choice
+import secrets
 
 # Creating the warrior class with starting stats
 class Warrior:
@@ -74,11 +77,11 @@ class Warrior:
 
 # Creating a base zombie and its stats
 class Zombie:
-    def __init__(self, level = 1):
+    def __init__(self, level = randint(1,3)):
         self.level = level
         self.name = "Zombie"
-        self.hp = 13 + (2 * self.level)
-        self.attack_damage = randint((self.level), (3 + self.level))
+        self.hp = 20 + (2 * self.level)
+        self.attack_damage = randint(1 + (self.level), (5 + self.level))
         self.defense = 0
         self.weapons = []
         self.armor = []
@@ -92,17 +95,21 @@ class Zombie:
             print("{name} dealt {damage} damage to {target_name}. {target_name} has died. You lose".format(name = self.name, damage = attack_damage, target_name = target.name))
             game_over = True
         elif attack_damage < target.hp:
-            target.hp -= attack_damage
+            if attack_damage < 0:
+                target.hp -= 0
+                print("{name} dealt {damage} damage to {target_name}. {target_name} has {target_hp} hp left!".format(name = self.name, damage = attack_damage, target_name = target.name, target_hp = target.hp))
+            else:
+                target.hp -= attack_damage
             print("{name} dealt {damage} damage to {target_name}. {target_name} has {target_hp} hp left!".format(name = self.name, damage = attack_damage, target_name = target.name, target_hp = target.hp))
 
 
 
 class Skeleton:
-    def __init__(self, level = 1):
+    def __init__(self, level = randint(3,5)):
         self.level = level
         self.name = "Skeleton"
-        self.hp = 15 + (2 * self.level)
-        self.attack_damage = randint((1 + self.level), (4 + self.level))
+        self.hp = 30 + (2 * self.level)
+        self.attack_damage = randint((2 + self.level), (5 + self.level))
         self.defense = 1
         self.weapons = []
         self.armor = []
@@ -115,11 +122,65 @@ class Skeleton:
             print("{name} dealt {damage} damage to {target_name}. {target_name} has died. You lose".format(name = self.name, damage = attack_damage, target_name = target.name))
             game_over = True
         elif attack_damage < target.hp:
-            target.hp -= attack_damage
+            if attack_damage < 0:
+                target.hp -= 0
+                print("{name} dealt {damage} damage to {target_name}. {target_name} has {target_hp} hp left!".format(name = self.name, damage = attack_damage, target_name = target.name, target_hp = target.hp))
+            else:
+                target.hp -= attack_damage
             print("{name} dealt {damage} damage to {target_name}. {target_name} has {target_hp} hp left!".format(name = self.name, damage = attack_damage, target_name = target.name, target_hp = target.hp))
 
-    
 
+
+class Vampire:
+    def __init__(self, level = randint(5,8)):
+        self.level = level
+        self.name = "Vampire"
+        self.hp = 35 + (2 * self.level)
+        self.attack_damage = randint((2 + self.level), (4 + self.level))
+        self.defense = 1
+        self.weapons = []
+        self.armor = []
+        self.expgive = 150 + (self.level * 25)
+
+    def attack(self, target):
+        attack_damage = self.attack_damage - target.defense
+        if attack_damage >= target.hp:
+            target.hp = 0
+            print("{name} dealt {damage} damage to {target_name}. {target_name} has died. You lose".format(name = self.name, damage = attack_damage, target_name = target.name))
+            game_over = True
+        elif attack_damage < target.hp:
+            if attack_damage < 0:
+                target.hp -= 0
+                print("{name} dealt {damage} damage to {target_name}. {target_name} has {target_hp} hp left!".format(name = self.name, damage = attack_damage, target_name = target.name, target_hp = target.hp))
+            else:
+                target.hp -= attack_damage
+            print("{name} dealt {damage} damage to {target_name}. {target_name} has {target_hp} hp left!".format(name = self.name, damage = attack_damage, target_name = target.name, target_hp = target.hp))
+
+
+class Dracula:
+    def __init__(self, level = 10):
+        self.level = level
+        self.name = "Dracula"
+        self.hp = 30 + (2 * self.level)
+        self.attack_damage = randint((2 + self.level), (4 + self.level))
+        self.defense = 1
+        self.weapons = []
+        self.armor = []
+        self.expgive = 150 + (self.level * 25)
+
+    def attack(self, target):
+        attack_damage = self.attack_damage - target.defense
+        if attack_damage >= target.hp:
+            target.hp = 0
+            print("{name} dealt {damage} damage to {target_name}. {target_name} has died. You lose".format(name = self.name, damage = attack_damage, target_name = target.name))
+            game_over = True
+        elif attack_damage < target.hp:
+            if attack_damage < 0:
+                target.hp -= 0
+                print("{name} dealt {damage} damage to {target_name}. {target_name} has {target_hp} hp left!".format(name = self.name, damage = attack_damage, target_name = target.name, target_hp = target.hp))
+            else:
+                target.hp -= attack_damage
+            print("{name} dealt {damage} damage to {target_name}. {target_name} has {target_hp} hp left!".format(name = self.name, damage = attack_damage, target_name = target.name, target_hp = target.hp))
 
 
 
@@ -135,24 +196,84 @@ player1 = Warrior(player_name)
 print("You may enter the dungeon whenever you are ready by typing \"dungeon\"")
 print("If you are low on health or mana you can always go back to town by typing \"town\" to rest and recover")
 print("If you would like to check your status including level, hp, mana, and experience needed to the next level type \"status\"")
+print("If you find yourself brace enough to take on Dracula who is haunting this town type \"Castle\" to confront him!")
 
 # creating variable to keep while loop running to repeat available inputs, until a game over condition is met.
 game_over = False
-
 battle_over = False
 
+# Keeps game running unless a game_over contition is met
 while game_over == False:
+    # Created a variable for raw input to run allowed methods/game
     raw_input = input(" ")
+    
+    
+    
+    # Start of battle options by typing dungeon into the console
     if raw_input == "dungeon":
+        # set condition to false to allow for loop to run until player or monster is at 0 hp
         battle_over = False
-        monster = Zombie()
+        # Creating seperate loop for player at lower level to fight lower level monsters
+        
+        if player1.level <= 3:
+            # Create a new zombie with random level to fight player
+            monster = Zombie()
+            while battle_over == False:
+                # Checks to see if monster hp is at 0 to prevent another loop
+                if monster.hp == 0:
+                    battle_over = True
+                else:
+                    player1.attack(monster)
+                    # prevents monster from attacking player if monster is at 0 hp after taking hit
+                    if monster.hp > 0:
+                        monster.attack(player1)
+        
+        elif player1.level < 6:
+            # Create a new skeleton with random level to fight player
+            monster = Skeleton()
+            while battle_over == False:
+                # Checks to see if monster hp is at 0 to prevent another loop
+                if monster.hp == 0:
+                    battle_over = True
+                else:
+                    player1.attack(monster)
+                    # prevents monster from attacking player if monster is at 0 hp after taking hit
+                    if monster.hp > 0:
+                        monster.attack(player1)
+
+        elif player1.level > 8:
+            # Create a new skeleton with random level to fight player
+            monster = Vampire()
+            while battle_over == False:
+                # Checks to see if monster hp is at 0 to prevent another loop
+                if monster.hp == 0:
+                    battle_over = True
+                else:
+                    player1.attack(monster)
+                    # prevents monster from attacking player if monster is at 0 hp after taking hit
+                    if monster.hp > 0:
+                        monster.attack(player1)
+
+
+    elif raw_input == "castle":
+        # set condition to false to allow for loop to run until player or monster is at 0 hp
+        battle_over = False
+        # Creating seperate loop for player at lower level to fight lower level monsters
+        
+        # Create a new zombie with random level to fight player
+        monster = Dracula()
         while battle_over == False:
+            # Checks to see if monster hp is at 0 to prevent another loop
             if monster.hp == 0:
                 battle_over = True
             else:
                 player1.attack(monster)
+                # prevents monster from attacking player if monster is at 0 hp after taking hit
                 if monster.hp > 0:
                     monster.attack(player1)
+
+
+
     elif raw_input == "town":
         player1.rest()
     elif raw_input == "status":
