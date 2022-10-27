@@ -31,6 +31,7 @@ class Warrior:
     def level_up(self):
         if self.exp >= self.exp_to_level:
             self.level += 1
+            # places additional exp towards the next level
             self.exp = (self.exp - self.exp_to_level)
             print("Congradulations! {name} has leveled up to level {level}".format(name = self.name, level = self.level))
     
@@ -42,12 +43,15 @@ class Warrior:
 
     # Creating method for character to deal damage to the target based on characters attack damage and targets defense
     def attack(self, target):
+        # equation to calculate the damage that will be delt to the other character
         attack_damage = self.attack_damage - target.defense
+        # checks to see if attack damage will defefat the enemy, granting exp based on the exp to give set by the monster.
         if attack_damage >= target.hp:
             target.hp = 0
             self.exp += target.expgive
             self.level_up()
             print("{name} dealt {damage} damage to {target_name}. {target_name} has died. You gain {exp}exp".format(name = self.name, damage = attack_damage, target_name = target.name, exp = str(target.expgive)))
+        # if damage is less than remaining health this will subtract the damage from the health and give an update on how much health is left.
         elif attack_damage < target.hp:
             target.hp -= attack_damage
             print("{name} dealt {damage} damage to {target_name}. {target_name} has {target_hp} hp left!".format(name = self.name, damage = attack_damage, target_name = target.name, target_hp = target.hp))
@@ -222,6 +226,9 @@ while game_over == False:
                 # Checks to see if monster hp is at 0 to prevent another loop
                 if monster.hp == 0:
                     battle_over = True
+                elif player1.hp == 0:
+                    battle_over = True
+                    game_over = True
                 else:
                     player1.attack(monster)
                     # prevents monster from attacking player if monster is at 0 hp after taking hit
@@ -235,6 +242,9 @@ while game_over == False:
                 # Checks to see if monster hp is at 0 to prevent another loop
                 if monster.hp == 0:
                     battle_over = True
+                elif player1.hp == 0:
+                    battle_over = True
+                    game_over = True
                 else:
                     player1.attack(monster)
                     # prevents monster from attacking player if monster is at 0 hp after taking hit
@@ -248,6 +258,9 @@ while game_over == False:
                 # Checks to see if monster hp is at 0 to prevent another loop
                 if monster.hp == 0:
                     battle_over = True
+                elif player1.hp == 0:
+                    battle_over = True
+                    game_over = True
                 else:
                     player1.attack(monster)
                     # prevents monster from attacking player if monster is at 0 hp after taking hit
@@ -265,7 +278,9 @@ while game_over == False:
         while battle_over == False:
             # Checks to see if monster hp is at 0 to prevent another loop
             if monster.hp == 0:
+                print("Congradulations you have defeated Dracula and have saved the town from his grasp!")
                 battle_over = True
+                game_over = True
             else:
                 player1.attack(monster)
                 # prevents monster from attacking player if monster is at 0 hp after taking hit
